@@ -1,24 +1,33 @@
 export default class InventoryManager {
-  constructor(productManager) {
-    this.productManager = productManager;
+  constructor() {
     this.inventory = new Map();
   }
 
-  addProductToInventory(productId, quantity) {
-    const product = this.productManager.getProductById(productId);
+  addProductToInventory(product, quantity) {
     if (product) {
-      this.inventory.set(productId, (this.inventory.get(productId) || 0) + quantity);
+      this.inventory.set(product.id, { ...product, stock: quantity })
     }
   }
 
-  removeProductFromInventory(productId, quantity) {
-    const currentQuantity = this.inventory.get(productId) || 0;
+  getProductById(id) {
+    return this.inventory.get(id);
+  }
+
+  updateProduct(id, updates) {
+    const product = this.getProductById(id);
+
+    if (product) {
+      Object.assign(product, updates);
+    }
+  }
+
+  removeProductUnit(productId, quantity) {
+    const product = this.inventory.get(productId);
+    const currentQuantity = product.stock ?? 0;
+
     if (currentQuantity >= quantity) {
-      this.inventory.set(productId, currentQuantity - quantity);
+      this.updateProduct(productId, { stock: currentQuantity - quantity })
     }
   }
 
-  getInventoryQuantity(productId) {
-    return this.inventory.get(productId) || 0;
-  }
 }

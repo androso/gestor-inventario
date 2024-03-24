@@ -1,17 +1,16 @@
 export default class OrderManager {
-  constructor(productManager, inventoryManager) {
-    this.productManager = productManager;
+  constructor(inventoryManager) {
     this.inventoryManager = inventoryManager;
     this.orders = [];
   }
 
   placeOrder(productId, quantity) {
-    const product = this.productManager.getProductById(productId);
-    const availableQuantity = this.inventoryManager.getInventoryQuantity(productId);
+    const product = this.inventoryManager.getProductById(productId);
+    const availableQuantity = product.stock;
 
     if (product && availableQuantity >= quantity) {
-      this.inventoryManager.removeProductFromInventory(productId, quantity);
-      this.orders.push({ product, quantity });
+      this.inventoryManager.removeProductUnit(productId, quantity);
+      this.orders.push({ product, orderQuantity: quantity });
     }
   }
 
